@@ -1,113 +1,146 @@
-# Épreuve finale – Simulation de restaurant (Structures de données & Threads)
+# **Rush au Restaurant – Projet Final 420-311** ✅ **COMPLET**
 
-Ce dépôt contient le **squelette de code** pour le premier volet de l’épreuve finale du cours de **Structures de données**.
-
-## 1. Objectif
-L’objectif est de développer une application **Java (console)** qui simule le service dans un petit restaurant pendant un “rush” de midi :
-
-- des clients arrivent, passent commande, attendent leurs plats 🍕 ;
-- un cuisinier prépare les commandes dans un **thread séparé** ;
-- les clients sont soit servis 😋, soit repartent fâchés 😡 si leur patience tombe à 0 ;
-- toutes les actions sont lues depuis un **fichier texte** ;
-- toute la sortie est écrite dans un **fichier de logs**.
-
-L’énoncé complet de l’épreuve (contexte, règles, format exact des sorties) est fourni séparément par l’enseignant·e.
-
-
-## 2. Prérequis
-
-- **Java** : version 21 et plus (recommandé 21).
-- **Maven** installé (`mvn` disponible dans le PATH).
-- IDE recommandé : **IntelliJ IDEA**
+**Simulateur Java d'un restaurant pendant le rush du déjeuner.**  
+**Évaluation** : Projet fonctionnel, testé avec les scénarios fournis.
 
 ---
 
-## 3. Cloner le projet
+## **Détails du Projet**
 
-```bash
-git clone https://github.com/la-sarita/Epreuve_finale_420_311.git
-cd Epreuve_finale_420_311
+- **Nom de l'étudiant** : Alben Matonde
+- **DA** : 2288532
+- **Cours** : 420-311 – Structures de données
+- **Professeur** : Sara Boumehraz
+- **Date de soumission** : 16 décembre 2025
 
-## 4. Structure du projet
+---
 
-Le projet suit la structure standard Maven :
-```text
-.
-├── pom.xml
-└── src
-    └── main
-        └── java
-            └── mv
-                └── sdd
-                    ├── App.java          # Point d'entrée (main)
-                    ├── model/            # Entités métier (Client, Commande, MenuPlat, Stats, ...)
-                    ├── sim/              # Simulation (Restaurant, Horloge, ...)
-                    │   └── thread/       # Threads (Cuisinier, ...)
-                    ├── io/               # Lecture d'actions, Logger
-                    └── utils/            # Constantes, Formatter, outils divers
-```
-## 5. Scénarios d’exemple
+## **Technologies et organisation du code**
 
-Un fichier de scénario est un simple fichier texte où chaque ligne décrit une action.
-Le dossier data contient deux fichiers exemples.
+- **Langage** : Java 21
+- **Gestion de projet** : Maven
+- **IDE utilisé** : IntelliJ IDEA
 
-## 6. Compilation et exécution
-### 6.1 Compiler le projet
-À la racine du projet :
-```bash
-mvn clean package
-```
+---
 
-Si tout se passe bien, Maven génère un .jar dans target/.
+## **Fonctionnalités implémentées**
 
-### 6.2 Exécuter l’application
+- Lecture séquentielle des actions à partir d’un fichier texte (arrivées, commandes, avance du temps, affichage d’état, statistiques, etc.).
+- **Gestion des clients avec suivi de la patience** :
+  - La patience diminue au fil du temps pendant l’attente.
+  - Un client devient fâché lorsque sa patience tombe à 0.
+  - Sinon, il devient servi lorsque sa commande est prête.
+- **Gestion des commandes** :
+  - Association d’une commande à un client.
+  - File d’attente des commandes à préparer.
+  - États d’une commande (en attente, en préparation, prête, perdue).
+- **Thread Cuisinier** qui :
+  - Récupère la prochaine commande dans la file.
+  - Démarre la préparation.
+  - Décrémente le temps restant.
+  - Marque la commande comme terminée et notifie le restaurant.
+- **Calcul des statistiques finales** :
+  - Nombre total de clients.
+  - Nombre de servis et de fâchés.
+  - Chiffre d’affaires.
+  - Nombre de plats vendus par type.
+- **Production d’un log structuré** :
+  - Résumé de l’état à chaque **AFFICHER_ETAT**.
+  - Détail des clients (état, patience, plats).
+  - Événements significatifs (arrivées, début/fin de commande, clients fâchés).
+  - Statistiques complètes à **AFFICHER_STATS**.
 
-L’application attend deux arguments :
-1. le chemin du fichier de scénario (entrée),
-2. le chemin du fichier de sortie (logs).
+---
 
-Exemple avec Maven :
-```bash
-mvn exec:java -Dexec.mainClass="mv.sdd.App" \
-              -Dexec.args="data/scenario_1.txt data/sortie_1.txt"
-```
+## **Description du Projet**
 
-> ⚠️ Adaptez mv.sdd.App si votre classe App est dans un autre package.
+Ce programme simule le fonctionnement d'un restaurant pendant le rush du midi :
 
-Après exécution, vous devriez obtenir un fichier data/sortie_1.txt contenant tous les logs de la simulation.
+- **Clients** : Ils arrivent avec une patience limitée.
+- **Commandes** : Les clients peuvent commander plusieurs plats : PIZZA🍕, BURGER🍔, FRITES🍟.
+- **Cuisinier** : Un thread concurrent gère la préparation des commandes dans l'ordre.
+- **Simulation du temps** : La méthode `tick()` fait avancer le temps, réduisant à la fois la patience des clients et le temps de préparation des plats.
+- **État des clients** : Certains clients sont servis avec satisfaction, d'autres quittent le restaurant fâchés.
+- **Statistiques** : Le programme suit le chiffre d'affaires, le nombre de clients servis ou fâchés, et les plats vendus.
+- **Sortie des données** : Les logs sont générés conformément au format demandé dans un fichier de sortie.
+
+---
+
+## **Organisation du Code**
+
+L'architecture du projet est structurée comme suit :
+
+mv.sdd/
+├── App.java # Point d'entrée de l'application
+├── io/ # Gestion des actions depuis les fichiers
+│ ├── ActionFileReader.java
+│ ├── ActionParser.java
+│ └── ActionType.java
+├── model/ # Modèles des entités du restaurant
+│ ├── Client.java
+│ ├── Commande.java
+│ ├── Stats.java (EnumMap plats)
+│ ├── Horloge.java
+│ └── ...
+├── sim/ # Logique de la simulation du restaurant
+│ └── Restaurant.java # Gestion des états et synchronisation
+└── sim.thread/ # Gestion de la concurrence avec le cuisinier
+└── Cuisinier.java # Thread Runnable pour le cuisinier
+└── utils/ # Outils divers pour les logs, formatage, constantes
+├── Logger.java
+├── Formatter.java # Formatage des logs pour les clients
+└── Constantes.java
 
 
-## 7. Travail à réaliser
+---
 
-À partir de ce squelette, vous devez :
-* compléter les méthodes marquées par // TODO ;
-* choisir et utiliser des structures de données appropriées (Map, Queue, List, etc.) ;
-* implémenter la logique de :
-  * gestion des clients et de leur patience,
-  * gestion des commandes et de leurs états,
-  * calcul et affichage des statistiques ;
-* implémenter et utiliser correctement le thread Cuisinier ;
-* gérer le temps simulé via une méthode tick() dans Restaurant (appelée depuis l’action AVANCER_TEMPS) ;
-* produire un log conforme au format demandé (résumés, lignes clients, stats, événements).
+## **Instructions d'Exécution**
 
-## 8. Règles et contraintes
+1. **Compilation**  
+   Pour compiler le projet, utilise la commande suivante :
 
-* Ne pas supprimer ni renommer les classes ou méthodes déjà utilisées par le squelette sans raison valable.
-* Vous pouvez ajouter :
-  * des méthodes privées ou utilitaires,
-  * des classes supplémentaires si elles respectent l’architecture proposée.
-* Respecter les conventions Java (noms de classes, de méthodes, indentation).
-* Tout ce qui est affiché doit passer par le Logger (pas de System.out.println dispersés dans le code).
+   ```bash
+   mvn clean package
+   Cela génère un fichier .jar dans le répertoire https://github.com/Alben11/Epreuve_finale_420_311_Matonde.git
 
-## 9. Versionnement (Git / GitHub)
+2. Lancer l'application
+Pour exécuter l'application avec Maven :
+mvn exec:java -Dexec.mainClass="mv.sdd.App" -Dexec.args="data/scenario_1.txt data/sortie_1_essaie.txt"
 
-* Votre code doit être versionné dans ce dépôt.
-* Ajoutez un fichier README.md (vous pouvez vous basez sur celui-ci) et complétez-le au besoin (notes personnelles, exemples de scénarios, etc.).
-* Si le dépôt est privé, pensez à inviter votre enseignant·e avec l’adresse indiquée dans l’énoncé.
+3. Consulter le fichier de sortie (ex. data/sortie_1_essaie.txt) pour voir le déroulement complet du service (états intermédiaires et statistiques).
 
-## 10. Aide
+## **Travail réalisé par rapport au squelette**
 
-* Référez-vous à l’énoncé complet (PDF ou document remis sur Léa).
-* Un document d’aide complémentaire sur les threads (synchronized, wait, notifyAll) peut aussi être fourni.
+À partir du squelette fourni, les éléments suivants ont été complétés ou ajoutés :
 
-Bon code, et bon service de midi au resto 🍕🍔🍟 !
+- Implémentation de la logique complète de gestion du temps via `tick()` dans **Restaurant**.
+- Implémentation de la diminution de patience et du changement d’état (en attente → servi ou parti fâché).
+- Implémentation de la file de commandes et des méthodes de support :
+  - Création de commandes,
+  - Ajout de plats,
+  - Passage en préparation,
+  - Marquage des commandes prêtes ou perdues.
+- Implémentation du thread **Cuisinier** avec synchronisation (`synchronized`, `wait`, `notifyAll`) pour :
+  - Attendre lorsqu’il n’y a aucune commande,
+  - Se réveiller quand une nouvelle commande arrive.
+- Calcul et mise à jour des statistiques à chaque événement pertinent.
+- Utilisation systématique du **Logger** et du **Formatter** pour produire un log conforme au format attendu.
+
+## **Scénarios de test**
+
+Le dossier **`data/`** contient :
+
+- Des scénarios fournis (par exemple **`scenario_1.txt`**, **`scenario_2.txt`**) permettant de valider la conformité avec les sorties d’exemple.
+- Éventuellement des scénarios de test personnels utilisés pour vérifier des cas particuliers (clients très impatients, plusieurs commandes en parallèle, etc.).
+
+Chaque ligne de scénario correspond à une action (ex. **DEMARRER_SERVICE**, **AJOUTER_CLIENT**, **PASSER_COMMANDE**, **AVANCER_TEMPS**, **AFFICHER_ETAT**, **AFFICHER_STATS**).
+
+---
+
+## **Limites et améliorations possibles**
+
+- La durée de préparation des plats est actuellement fixée par les constantes de l’énoncé ; elle pourrait être rendue configurable par fichier.
+- D’autres stratégies de gestion de la file (priorités, tri par attente, etc.) pourraient être ajoutées.
+- Une interface graphique minimale ou une visualisation en temps réel pourrait enrichir la simulation.
+
+
