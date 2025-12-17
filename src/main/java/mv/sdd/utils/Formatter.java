@@ -67,8 +67,24 @@ public final class Formatter {
      */
     public static String clientLine(Client client, MenuPlat codePlat) {
         // TODO: à implémenter
-        return null;
+        String emojiEtat = emojiEtatClient(client.getEtat());
+
+        StringBuilder platsStr = new StringBuilder();
+        if (client.getCommande() != null && client.getCommande().getPlats() != null) {
+            client.getCommande().getPlats().forEach(plat ->
+                    platsStr.append(" ").append(emojiPlat(plat))
+            );
+        }
+
+        return String.format("    #%d %s %s (pat=%d,%s )",
+                client.getId(),
+                client.getNom(),
+                emojiEtat,
+                client.getPatience(),
+                platsStr.toString()
+        );
     }
+
 
     // ---------- Lignes événements ---------- //
     public static String eventArriveeClient(int temps, Client client) {
